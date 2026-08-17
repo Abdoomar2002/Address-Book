@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/ProjectEvaluation
+/backend/AddressBook/.vs
+/backend/AddressBook/AddressBook.API/bin/Debug/net10.0

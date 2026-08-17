@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="AddressBook.API/AddressBook.API.csproj" />
+  <Project Path="AddressBook.Application/AddressBook.Application.csproj" />
+  <Project Path="AddressBook.Domain/AddressBook.Domain.csproj" />
+  <Project Path="AddressBook.Infrastructure/AddressBook.Infrastructure.csproj" />
+</Solution>
