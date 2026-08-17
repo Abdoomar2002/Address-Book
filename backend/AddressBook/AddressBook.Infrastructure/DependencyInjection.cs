@@ -23,6 +23,8 @@ namespace AddressBook.Infrastructure
             services.AddScoped<DbSeeder>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IPasswordHasher<AppUser>, PasswordHasher<AppUser>>();
+            services.AddScoped<IJobTitleService, JobTitleService>();
+            services.AddScoped<IDepartmentService, DepartmentService>();
         }
     }
 }

@@ -1,3 +1,4 @@
+using AddressBook.Domain.Exceptions;
 using System.Net;
 using System.Text.Json;
 
@@ -68,6 +69,7 @@ namespace AddressBook.API.Middleware
         {
             UnauthorizedAccessException => HttpStatusCode.Unauthorized,
             KeyNotFoundException => HttpStatusCode.NotFound,
+            ConflictException => HttpStatusCode.Conflict,
             ArgumentException => HttpStatusCode.BadRequest,
             _ => HttpStatusCode.InternalServerError
         };
