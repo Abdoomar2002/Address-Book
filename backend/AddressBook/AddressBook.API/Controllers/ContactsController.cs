@@ -10,11 +10,15 @@ namespace AddressBook.API.Controllers
     [Route("api/contacts")]
     public class ContactsController : ControllerBase
     {
-        private readonly IContactService _service;
+        private const string ExcelContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
-        public ContactsController(IContactService service)
+        private readonly IContactService _service;
+        private readonly IExcelExportService _excelExportService;
+
+        public ContactsController(IContactService service, IExcelExportService excelExportService)
         {
             _service = service;
+            _excelExportService = excelExportService;
         }
 
         [HttpGet]
@@ -24,6 +28,25 @@ namespace AddressBook.API.Controllers
             CancellationToken cancellationToken)
         {
             return Ok(await _service.GetAllAsync(filter, cancellationToken));
+        }
+
+        /// <summary>
+        /// Exports the same result set as <see cref="GetAll"/> - identical filter, identical
+        /// service call - as an .xlsx workbook.
+        /// </summary>
+        [HttpGet("export")]
+        // Without Produces, the document advertises text/plain and Swagger UI renders the
+        // workbook as text instead of offering it as a download.
+        [Produces(ExcelContentType)]
+        [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Export(
+            [FromQuery] ContactFilterDto filter,
+            CancellationToken cancellationToken)
+        {
+            var contacts = await _service.GetAllAsync(filter, cancellationToken);
+            var bytes = _excelExportService.ExportContacts(contacts);
+
+            return File(bytes, ExcelContentType, "AddressBook.xlsx");
         }
 
         [HttpGet("{id:guid}")]

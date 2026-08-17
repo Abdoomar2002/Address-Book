@@ -27,6 +27,7 @@ namespace AddressBook.Infrastructure
             services.AddScoped<IDepartmentService, DepartmentService>();
             services.AddScoped<IPasswordHasher<Contact>, PasswordHasher<Contact>>();
             services.AddScoped<IContactService, ContactService>();
+            services.AddScoped<IExcelExportService, ExcelExportService>();
         }
     }
 }
