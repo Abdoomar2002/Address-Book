@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
@@ -10,7 +11,15 @@ import { AuthService } from '../../core/services/auth.service';
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatToolbarModule, MatButtonModule, MatIconModule],
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule
+  ],
   template: `
     <mat-toolbar color="primary">
       <span class="main-layout__title">Address Book</span>
@@ -26,11 +35,39 @@ import { AuthService } from '../../core/services/auth.service';
         <span class="main-layout__user">{{ fullName }}</span>
       }
 
-      <button mat-button (click)="logout()">
+      <button class="main-layout__logout" mat-button (click)="logout()">
         <mat-icon>logout</mat-icon>
-        <span class="main-layout__logout-label">Logout</span>
+        Logout
+      </button>
+
+      <!-- Phone layout: everything above collapses into this menu. -->
+      <button
+        class="main-layout__menu-button"
+        mat-icon-button
+        [matMenuTriggerFor]="navMenu"
+        aria-label="Open navigation menu"
+      >
+        <mat-icon>menu</mat-icon>
       </button>
     </mat-toolbar>
+
+    <mat-menu #navMenu="matMenu">
+      @if (fullName) {
+        <div class="main-layout__menu-user" disabled>{{ fullName }}</div>
+      }
+      <a mat-menu-item routerLink="/contacts">
+        <mat-icon>contacts</mat-icon>
+        <span>Contacts</span>
+      </a>
+      <a mat-menu-item routerLink="/settings">
+        <mat-icon>settings</mat-icon>
+        <span>Settings</span>
+      </a>
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Logout</span>
+      </button>
+    </mat-menu>
 
     <main class="main-layout__content">
       <router-outlet />
@@ -65,9 +102,20 @@ import { AuthService } from '../../core/services/auth.service';
         padding: 24px;
       }
 
-      /* On a phone the toolbar would otherwise be wider than the viewport and
-         scroll the whole page sideways. Drop the labels, keep the controls. */
-      @media (max-width: 599px) {
+      /* The menu button only exists on narrow viewports. */
+      .main-layout__menu-button {
+        display: none;
+      }
+
+      .main-layout__menu-user {
+        padding: 8px 16px;
+        opacity: 0.6;
+        font-size: 0.85rem;
+      }
+
+      /* On a phone the toolbar would be wider than the viewport, so the nav, user
+         name and logout collapse into a single menu icon. */
+      @media (max-width: 599.98px) {
         mat-toolbar {
           padding: 0 8px;
         }
@@ -77,14 +125,14 @@ import { AuthService } from '../../core/services/auth.service';
           font-size: 1rem;
         }
 
-        .main-layout__nav a {
-          min-width: 0;
-          padding: 0 8px;
+        .main-layout__nav,
+        .main-layout__user,
+        .main-layout__logout {
+          display: none;
         }
 
-        .main-layout__user,
-        .main-layout__logout-label {
-          display: none;
+        .main-layout__menu-button {
+          display: inline-flex;
         }
 
         .main-layout__content {

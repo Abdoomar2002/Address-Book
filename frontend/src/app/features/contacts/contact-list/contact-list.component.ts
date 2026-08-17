@@ -1,4 +1,7 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,8 +10,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { Contact } from '../../../core/models/contact.model';
+import { Contact, ContactFilter } from '../../../core/models/contact.model';
 import { ContactService } from '../../../core/services/contact.service';
+import { downloadBlob } from '../../../shared/utils/download.util';
+import { ContactFilterComponent } from '../contact-filter/contact-filter.component';
 import {
   ConfirmDialogComponent,
   ConfirmDialogData
@@ -21,7 +26,14 @@ const BASE64_PATTERN = /^[A-Za-z0-9+/]+={0,2}$/;
 @Component({
   selector: 'app-contact-list',
   standalone: true,
-  imports: [MatTableModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule, MatTooltipModule],
+  imports: [
+    ContactFilterComponent,
+    MatTableModule,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatTooltipModule
+  ],
   templateUrl: './contact-list.component.html',
   styleUrl: './contact-list.component.css'
 })
@@ -30,31 +42,43 @@ export class ContactListComponent implements OnInit {
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
 
-  readonly displayedColumns = [
-    'photo',
-    'fullName',
-    'jobTitleName',
-    'departmentName',
-    'mobileNumber',
-    'email',
-    'age',
-    'actions'
-  ];
+  private readonly breakpointObserver = inject(BreakpointObserver);
+
+  /** Below 768px the table drops its widest columns rather than relying on scrolling. */
+  private readonly isNarrow = toSignal(
+    this.breakpointObserver.observe('(max-width: 767.98px)').pipe(map(state => state.matches)),
+    { initialValue: false }
+  );
+
+  readonly displayedColumns = computed(() =>
+    this.isNarrow()
+      ? ['photo', 'fullName', 'jobTitleName', 'age', 'actions']
+      : ['photo', 'fullName', 'jobTitleName', 'departmentName', 'mobileNumber', 'email', 'age', 'actions']
+  );
 
   readonly contacts = signal<Contact[]>([]);
   readonly loading = signal(true);
+  readonly exporting = signal(false);
 
   /** Ids whose photo failed to decode, so the row falls back to the placeholder. */
   private readonly brokenPhotos = signal<ReadonlySet<string>>(new Set());
 
+  /** Last applied filter, reused when the list reloads. */
+  private filter: ContactFilter = {};
+
   ngOnInit(): void {
+    this.load();
+  }
+
+  onFilterChange(filter: ContactFilter): void {
+    this.filter = filter;
     this.load();
   }
 
   load(): void {
     this.loading.set(true);
 
-    this.contactService.getAll().subscribe({
+    this.contactService.getAll(this.filter).subscribe({
       next: contacts => {
         this.contacts.set(contacts);
         this.loading.set(false);
@@ -84,6 +108,19 @@ export class ContactListComponent implements OnInit {
   /** A stored value that is not decodable image data must not leave a broken icon. */
   onPhotoError(contact: Contact): void {
     this.brokenPhotos.update(ids => new Set(ids).add(contact.id));
+  }
+
+  /** Exports exactly what the current filter shows - the API re-runs the same query. */
+  exportExcel(): void {
+    this.exporting.set(true);
+
+    this.contactService.export(this.filter).subscribe({
+      next: blob => {
+        downloadBlob(blob, 'AddressBook.xlsx');
+        this.exporting.set(false);
+      },
+      error: () => this.exporting.set(false)
+    });
   }
 
   addContact(): void {

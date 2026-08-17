@@ -1,0 +1,38 @@
+.contact-filter {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 0 16px;
+  align-items: start;
+  margin-bottom: 8px;
+}
+
+/* Give the free-text box more room than the narrow selects. */
+.contact-filter__search {
+  grid-column: span 2;
+}
+
+.contact-filter__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  /* Line up with the form fields, which carry their own subscript spacing. */
+  padding-bottom: 22px;
+}
+
+@media (max-width: 599px) {
+  .contact-filter {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-filter__search {
+    grid-column: auto;
+  }
+
+  .contact-filter__actions {
+    padding-bottom: 8px;
+  }
+
+  .contact-filter__actions button {
+    flex: 1 1 0;
+  }
+}

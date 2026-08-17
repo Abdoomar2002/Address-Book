@@ -13,6 +13,12 @@
   font-weight: 500;
 }
 
+.contacts__header-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .contacts__state {
   display: flex;
   flex-direction: column;
@@ -40,6 +46,21 @@
 .contacts__table {
   width: 100%;
   min-width: 720px;
+}
+
+/* With the wide columns dropped the remaining ones fit, so drop the min-width too
+   and keep the wrapper's overflow as a safety net. */
+@media (max-width: 767.98px) {
+  .contacts__table {
+    min-width: 0;
+  }
+
+  /* Material pads cells 16px a side; halving it claws back ~80px across the row. */
+  .contacts__table ::ng-deep .mat-mdc-header-cell,
+  .contacts__table ::ng-deep .mat-mdc-cell {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
 }
 
 .contacts__avatar {

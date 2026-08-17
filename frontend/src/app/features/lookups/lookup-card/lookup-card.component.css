@@ -1,0 +1,42 @@
+.lookup-card {
+  height: 100%;
+}
+
+.lookup-card__add {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.lookup-card__add-field {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Align the button with the input, which carries its own subscript spacing. */
+.lookup-card__add button {
+  margin-top: 8px;
+}
+
+.lookup-card__state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 0;
+}
+
+.lookup-card__empty {
+  margin: 0;
+  opacity: 0.6;
+}
+
+.lookup-card__list {
+  padding-top: 0;
+}
+
+.lookup-card__actions {
+  display: flex;
+  gap: 4px;
+  white-space: nowrap;
+}

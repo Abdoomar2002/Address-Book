@@ -1,0 +1,49 @@
+<form class="contact-filter" [formGroup]="form" (ngSubmit)="onSearch()">
+  <mat-form-field appearance="outline" class="contact-filter__search">
+    <mat-label>Search</mat-label>
+    <input matInput type="search" formControlName="searchTerm" placeholder="Name, email, mobile, address" />
+    <mat-icon matIconSuffix>search</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Job title</mat-label>
+    <mat-select formControlName="jobTitleId">
+      <mat-option value="">All job titles</mat-option>
+      @for (jobTitle of jobTitles(); track jobTitle.id) {
+        <mat-option [value]="jobTitle.id">{{ jobTitle.name }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Department</mat-label>
+    <mat-select formControlName="departmentId">
+      <mat-option value="">All departments</mat-option>
+      @for (department of departments(); track department.id) {
+        <mat-option [value]="department.id">{{ department.name }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Born from</mat-label>
+    <input matInput [matDatepicker]="fromPicker" formControlName="birthDateFrom" />
+    <mat-datepicker-toggle matIconSuffix [for]="fromPicker" />
+    <mat-datepicker #fromPicker />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Born to</mat-label>
+    <input matInput [matDatepicker]="toPicker" formControlName="birthDateTo" />
+    <mat-datepicker-toggle matIconSuffix [for]="toPicker" />
+    <mat-datepicker #toPicker />
+  </mat-form-field>
+
+  <div class="contact-filter__actions">
+    <button mat-flat-button color="primary" type="submit">
+      <mat-icon>search</mat-icon>
+      Search
+    </button>
+    <button mat-stroked-button type="button" (click)="onClear()">Clear</button>
+  </div>
+</form>

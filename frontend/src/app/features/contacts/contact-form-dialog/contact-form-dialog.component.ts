@@ -14,6 +14,7 @@ import { Contact, ContactSave } from '../../../core/models/contact.model';
 import { Lookup } from '../../../core/models/lookup.model';
 import { ContactService } from '../../../core/services/contact.service';
 import { LookupService } from '../../../core/services/lookup.service';
+import { toIsoDate } from '../../../shared/utils/date.util';
 
 /** Egyptian mobile, matching the RegularExpression on ContactSaveDto. */
 const EGYPT_MOBILE_PATTERN = /^(\+20|0020|0)?1[0125]\d{8}$/;
@@ -193,12 +194,4 @@ export class ContactFormDialogComponent {
 
     return payload;
   }
-}
-
-/** Local calendar date as yyyy-MM-dd, avoiding the UTC shift of toISOString(). */
-function toIsoDate(date: Date): string {
-  const month = `${date.getMonth() + 1}`.padStart(2, '0');
-  const day = `${date.getDate()}`.padStart(2, '0');
-
-  return `${date.getFullYear()}-${month}-${day}`;
 }

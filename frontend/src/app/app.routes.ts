@@ -35,7 +35,10 @@ export const routes: Routes = [
       },
       {
         path: 'settings',
-        loadComponent: () => import('./features/settings/settings.component').then(m => m.SettingsComponent)
+        loadComponent: () =>
+          import('./features/lookups/lookup-management/lookup-management.component').then(
+            m => m.LookupManagementComponent
+          )
       }
     ]
   },

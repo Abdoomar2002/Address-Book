@@ -1,0 +1,48 @@
+<mat-card class="lookup-card">
+  <mat-card-header>
+    <mat-card-title>{{ title() }}</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <form class="lookup-card__add" [formGroup]="addForm" (ngSubmit)="add()">
+      <mat-form-field appearance="outline" class="lookup-card__add-field">
+        <mat-label>Add {{ noun() }}</mat-label>
+        <input matInput formControlName="name" [attr.aria-label]="'New ' + noun()" />
+        @if (addForm.controls.name.hasError('required') && addForm.controls.name.touched) {
+          <mat-error>Name is required.</mat-error>
+        } @else if (addForm.controls.name.hasError('maxlength')) {
+          <mat-error>Name must be at most 100 characters.</mat-error>
+        }
+      </mat-form-field>
+
+      <button mat-flat-button color="primary" type="submit" [disabled]="saving()">
+        <mat-icon>add</mat-icon>
+        Add
+      </button>
+    </form>
+
+    @if (loading()) {
+      <div class="lookup-card__state">
+        <mat-spinner diameter="32" />
+      </div>
+    } @else if (items().length === 0) {
+      <p class="lookup-card__state lookup-card__empty">No {{ noun() }}s yet.</p>
+    } @else {
+      <mat-list class="lookup-card__list">
+        @for (item of items(); track item.id) {
+          <mat-list-item>
+            <span matListItemTitle>{{ item.name }}</span>
+            <span matListItemMeta class="lookup-card__actions">
+              <button mat-icon-button matTooltip="Rename" (click)="edit(item)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button matTooltip="Delete" color="warn" (click)="remove(item)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </span>
+          </mat-list-item>
+        }
+      </mat-list>
+    }
+  </mat-card-content>
+</mat-card>

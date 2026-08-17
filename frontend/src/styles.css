@@ -2,3 +2,25 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/* Dialogs go full-screen on a phone. These live in the global stylesheet because
+   the overlay pane is rendered outside every component's view encapsulation. */
+@media (max-width: 599.98px) {
+  .cdk-overlay-pane.mat-mdc-dialog-panel {
+    max-width: 100vw !important;
+    width: 100vw !important;
+    height: 100dvh;
+  }
+
+  .cdk-overlay-pane.mat-mdc-dialog-panel .mat-mdc-dialog-surface {
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Let the body take the leftover height and scroll inside the sheet. */
+  .cdk-overlay-pane.mat-mdc-dialog-panel .mat-mdc-dialog-content {
+    max-height: none;
+    flex: 1 1 auto;
+  }
+}
