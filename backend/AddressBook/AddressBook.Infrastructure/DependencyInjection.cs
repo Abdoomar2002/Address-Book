@@ -1,5 +1,9 @@
-﻿using AddressBook.Infrastructure.Data;
+﻿using AddressBook.Application.Interfaces;
+using AddressBook.Domain.Entites;
+using AddressBook.Infrastructure.Data;
 using AddressBook.Infrastructure.Data.Seed;
+using AddressBook.Infrastructure.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +21,8 @@ namespace AddressBook.Infrastructure
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<DbSeeder>();
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IPasswordHasher<AppUser>, PasswordHasher<AppUser>>();
         }
     }
 }
