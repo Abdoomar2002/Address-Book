@@ -101,8 +101,9 @@ using (var scope = app.Services.CreateScope())
         context.Database.EnsureCreated();
     }
 };
+// 4200 is the Angular default; 4300 is the fallback used when 4200 is already taken.
 app.UseCors(policy => policy
-    .WithOrigins("http://localhost:4200")
+    .WithOrigins("http://localhost:4200", "http://localhost:4300")
     .AllowAnyMethod()
     .AllowAnyHeader()
     );

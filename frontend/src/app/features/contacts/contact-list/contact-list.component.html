@@ -1,0 +1,86 @@
+<header class="contacts__header">
+  <h1 class="contacts__title">Contacts</h1>
+
+  <button mat-flat-button color="primary" (click)="addContact()">
+    <mat-icon>add</mat-icon>
+    Add Contact
+  </button>
+</header>
+
+@if (loading()) {
+  <div class="contacts__state">
+    <mat-spinner diameter="48" />
+  </div>
+} @else if (contacts().length === 0) {
+  <div class="contacts__state contacts__empty">
+    <mat-icon class="contacts__empty-icon">contacts</mat-icon>
+    <p>No contacts found</p>
+  </div>
+} @else {
+  <div class="contacts__table-wrapper">
+    <table mat-table [dataSource]="contacts()" class="contacts__table">
+      <ng-container matColumnDef="photo">
+        <th mat-header-cell *matHeaderCellDef>Photo</th>
+        <td mat-cell *matCellDef="let contact">
+          @if (hasPhoto(contact)) {
+            <img
+              class="contacts__avatar"
+              [src]="photoSrc(contact)"
+              [alt]="contact.fullName"
+              (error)="onPhotoError(contact)"
+            />
+          } @else {
+            <div class="contacts__avatar contacts__avatar--placeholder">
+              <mat-icon>person</mat-icon>
+            </div>
+          }
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="fullName">
+        <th mat-header-cell *matHeaderCellDef>Full Name</th>
+        <td mat-cell *matCellDef="let contact">{{ contact.fullName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="jobTitleName">
+        <th mat-header-cell *matHeaderCellDef>Job Title</th>
+        <td mat-cell *matCellDef="let contact">{{ contact.jobTitleName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="departmentName">
+        <th mat-header-cell *matHeaderCellDef>Department</th>
+        <td mat-cell *matCellDef="let contact">{{ contact.departmentName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="mobileNumber">
+        <th mat-header-cell *matHeaderCellDef>Mobile</th>
+        <td mat-cell *matCellDef="let contact">{{ contact.mobileNumber }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef>Email</th>
+        <td mat-cell *matCellDef="let contact">{{ contact.email }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="age">
+        <th mat-header-cell *matHeaderCellDef>Age</th>
+        <td mat-cell *matCellDef="let contact">{{ contact.age }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef class="contacts__actions-cell">Actions</th>
+        <td mat-cell *matCellDef="let contact" class="contacts__actions-cell">
+          <button mat-icon-button matTooltip="Edit" (click)="editContact(contact)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button matTooltip="Delete" color="warn" (click)="deleteContact(contact)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </div>
+}

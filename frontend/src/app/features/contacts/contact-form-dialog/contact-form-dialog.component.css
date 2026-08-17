@@ -1,0 +1,69 @@
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  padding-top: 8px;
+  min-width: min(560px, 78vw);
+}
+
+.contact-form__row {
+  display: flex;
+  gap: 16px;
+}
+
+.contact-form__row > * {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.contact-form__photo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.contact-form__thumb {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.contact-form__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.contact-form__photo-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+/* The real input is driven by the styled button next to it. */
+.contact-form__file {
+  display: none;
+}
+
+.contact-form__photo-error {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--mat-sys-error, #b3261e);
+}
+
+@media (max-width: 599px) {
+  .contact-form {
+    min-width: 0;
+  }
+
+  .contact-form__row {
+    flex-direction: column;
+    gap: 0;
+  }
+}

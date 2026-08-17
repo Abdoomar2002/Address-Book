@@ -45,13 +45,20 @@ namespace AddressBook.Application.DTOs.Contacts
         [MaxLength(255, ErrorMessage = "Email must be at most 255 characters.")]
         public string Email { get; set; } = string.Empty;
 
-        /// <summary>Hashed before it reaches <c>Contact.PasswordHash</c>; never stored as given.</summary>
-        [Required(ErrorMessage = "Password is required.")]
+        /// <summary>
+        /// Hashed before it reaches <c>Contact.PasswordHash</c>; never stored as given.
+        /// Required when creating. On update, omit it to leave the existing password
+        /// untouched - the service only rehashes when a value is supplied.
+        /// </summary>
         [MinLength(6, ErrorMessage = "Password must be at least 6 characters.")]
-        public string Password { get; set; } = string.Empty;
+        public string? Password { get; set; }
 
+        /// <summary>
+        /// Raw base64 image data, without the <c>data:</c> URL prefix. The cap allows a
+        /// photo of roughly 1 MB once decoded.
+        /// </summary>
         [Required(ErrorMessage = "Photo is required.")]
-        [MaxLength(1000, ErrorMessage = "Photo must be at most 1000 characters.")]
+        [MaxLength(1_500_000, ErrorMessage = "Photo is too large.")]
         public string PhotoBase64 { get; set; } = string.Empty;
     }
 }

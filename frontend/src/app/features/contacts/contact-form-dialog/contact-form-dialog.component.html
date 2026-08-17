@@ -1,0 +1,141 @@
+<h2 mat-dialog-title>{{ title }}</h2>
+
+<mat-dialog-content>
+  <form class="contact-form" [formGroup]="form" (ngSubmit)="onSubmit()" id="contact-form">
+    <mat-form-field appearance="outline">
+      <mat-label>Full name</mat-label>
+      <input matInput type="text" formControlName="fullName" autocomplete="name" />
+      @if (form.controls.fullName.hasError('required')) {
+        <mat-error>Full name is required.</mat-error>
+      } @else if (form.controls.fullName.hasError('maxlength')) {
+        <mat-error>Full name must be at most 200 characters.</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="contact-form__row">
+      <mat-form-field appearance="outline">
+        <mat-label>Job title</mat-label>
+        <mat-select formControlName="jobTitleId">
+          @for (jobTitle of jobTitles(); track jobTitle.id) {
+            <mat-option [value]="jobTitle.id">{{ jobTitle.name }}</mat-option>
+          }
+        </mat-select>
+        @if (form.controls.jobTitleId.hasError('required')) {
+          <mat-error>Job title is required.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Department</mat-label>
+        <mat-select formControlName="departmentId">
+          @for (department of departments(); track department.id) {
+            <mat-option [value]="department.id">{{ department.name }}</mat-option>
+          }
+        </mat-select>
+        @if (form.controls.departmentId.hasError('required')) {
+          <mat-error>Department is required.</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="contact-form__row">
+      <mat-form-field appearance="outline">
+        <mat-label>Mobile</mat-label>
+        <input matInput type="tel" formControlName="mobileNumber" autocomplete="tel" />
+        @if (form.controls.mobileNumber.hasError('required')) {
+          <mat-error>Mobile number is required.</mat-error>
+        } @else if (form.controls.mobileNumber.hasError('pattern')) {
+          <mat-error>Enter a valid Egyptian mobile, e.g. 01012345678.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Date of birth</mat-label>
+        <input matInput [matDatepicker]="dobPicker" [max]="today" formControlName="dateOfBirth" />
+        <mat-datepicker-toggle matIconSuffix [for]="dobPicker" />
+        <mat-datepicker #dobPicker />
+        @if (form.controls.dateOfBirth.hasError('required')) {
+          <mat-error>Date of birth is required.</mat-error>
+        } @else if (form.controls.dateOfBirth.hasError('matDatepickerMax')) {
+          <mat-error>Date of birth must be in the past.</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" formControlName="email" autocomplete="email" />
+      @if (form.controls.email.hasError('required')) {
+        <mat-error>Email is required.</mat-error>
+      } @else if (form.controls.email.hasError('email')) {
+        <mat-error>Enter a valid email address.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Address</mat-label>
+      <textarea matInput rows="2" formControlName="address"></textarea>
+      @if (form.controls.address.hasError('required')) {
+        <mat-error>Address is required.</mat-error>
+      } @else if (form.controls.address.hasError('maxlength')) {
+        <mat-error>Address must be at most 255 characters.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Password</mat-label>
+      <input matInput type="password" formControlName="password" autocomplete="new-password" />
+      @if (isEdit) {
+        <mat-hint>Leave blank to keep the current password.</mat-hint>
+      }
+      @if (form.controls.password.hasError('required')) {
+        <mat-error>Password is required.</mat-error>
+      } @else if (form.controls.password.hasError('minlength')) {
+        <mat-error>Password must be at least 6 characters.</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="contact-form__photo">
+      <div class="contact-form__thumb">
+        @if (photoPreview()) {
+          <img [src]="photoPreview()" alt="Photo preview" />
+        } @else {
+          <mat-icon>person</mat-icon>
+        }
+      </div>
+
+      <div class="contact-form__photo-actions">
+        <input
+          #photoInput
+          class="contact-form__file"
+          type="file"
+          accept="image/*"
+          (change)="onPhotoSelected($event)"
+        />
+        <button mat-stroked-button type="button" (click)="photoInput.click()">
+          <mat-icon>photo_camera</mat-icon>
+          {{ photoPreview() ? 'Change photo' : 'Choose photo' }}
+        </button>
+
+        @if (photoPreview()) {
+          <button mat-button type="button" (click)="clearPhoto()">Remove</button>
+        }
+
+        @if (photoError()) {
+          <p class="contact-form__photo-error">{{ photoError() }}</p>
+        }
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" mat-dialog-close [disabled]="saving()">Cancel</button>
+  <button mat-flat-button color="primary" type="submit" form="contact-form" [disabled]="saving()">
+    @if (saving()) {
+      <mat-spinner diameter="20" />
+    } @else {
+      {{ submitLabel }}
+    }
+  </button>
+</mat-dialog-actions>

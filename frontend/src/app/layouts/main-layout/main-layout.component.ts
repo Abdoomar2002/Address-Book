@@ -28,7 +28,7 @@ import { AuthService } from '../../core/services/auth.service';
 
       <button mat-button (click)="logout()">
         <mat-icon>logout</mat-icon>
-        Logout
+        <span class="main-layout__logout-label">Logout</span>
       </button>
     </mat-toolbar>
 
@@ -63,6 +63,33 @@ import { AuthService } from '../../core/services/auth.service';
 
       .main-layout__content {
         padding: 24px;
+      }
+
+      /* On a phone the toolbar would otherwise be wider than the viewport and
+         scroll the whole page sideways. Drop the labels, keep the controls. */
+      @media (max-width: 599px) {
+        mat-toolbar {
+          padding: 0 8px;
+        }
+
+        .main-layout__title {
+          margin-right: 8px;
+          font-size: 1rem;
+        }
+
+        .main-layout__nav a {
+          min-width: 0;
+          padding: 0 8px;
+        }
+
+        .main-layout__user,
+        .main-layout__logout-label {
+          display: none;
+        }
+
+        .main-layout__content {
+          padding: 16px;
+        }
       }
     `
   ]

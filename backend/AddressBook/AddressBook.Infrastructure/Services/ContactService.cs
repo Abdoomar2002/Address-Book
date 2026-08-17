@@ -94,7 +94,7 @@ namespace AddressBook.Infrastructure.Services
         public async Task<ContactDto> CreateAsync(ContactSaveDto dto, CancellationToken cancellationToken = default)
         {
             var entity = new Contact();
-            await ApplyAsync(entity, dto, cancellationToken);
+            await ApplyAsync(entity, dto, isCreate: true, cancellationToken);
 
             _context.Contacts.Add(entity);
             await _context.SaveChangesAsync(cancellationToken);
@@ -108,7 +108,7 @@ namespace AddressBook.Infrastructure.Services
             var entity = await _context.Contacts.SingleOrDefaultAsync(c => c.Id == id, cancellationToken)
                 ?? throw NotFound(id);
 
-            await ApplyAsync(entity, dto, cancellationToken);
+            await ApplyAsync(entity, dto, isCreate: false, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
             return await GetByIdAsync(entity.Id, cancellationToken);
@@ -127,11 +127,16 @@ namespace AddressBook.Infrastructure.Services
         /// Copies a save DTO onto an entity, hashing the password. Shared by create and update
         /// so the two can never drift apart.
         /// </summary>
-        private async Task ApplyAsync(Contact entity, ContactSaveDto dto, CancellationToken cancellationToken)
+        private async Task ApplyAsync(Contact entity, ContactSaveDto dto, bool isCreate, CancellationToken cancellationToken)
         {
             if (dto.DateOfBirth is null)
             {
                 throw new ArgumentException("Date of birth is required.");
+            }
+
+            if (isCreate && string.IsNullOrWhiteSpace(dto.Password))
+            {
+                throw new ArgumentException("Password is required.");
             }
 
             await GuardLookupsExistAsync(dto.JobTitleId, dto.DepartmentId, cancellationToken);
@@ -148,8 +153,12 @@ namespace AddressBook.Infrastructure.Services
             entity.JobTitleId = dto.JobTitleId;
             entity.DepartmentId = dto.DepartmentId;
 
-            // The plain password is never persisted, only this hash.
-            entity.PasswordHash = _passwordHasher.HashPassword(entity, dto.Password);
+            // Only rehash when a password was supplied, so an edit that leaves the field
+            // blank keeps the existing one. The plain value is never persisted.
+            if (!string.IsNullOrWhiteSpace(dto.Password))
+            {
+                entity.PasswordHash = _passwordHasher.HashPassword(entity, dto.Password);
+            }
         }
 
         /// <summary>

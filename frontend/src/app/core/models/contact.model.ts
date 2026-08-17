@@ -32,8 +32,8 @@ export interface ContactSave {
   dateOfBirth: string;
   address: string;
   email: string;
-  /** Required on update too - the API rehashes it on every save. */
-  password: string;
+  /** Required when creating. Omit on update to leave the existing password unchanged. */
+  password?: string;
   photoBase64: string;
 }
 

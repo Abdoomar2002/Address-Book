@@ -16,7 +16,9 @@ namespace AddressBook.Infrastructure.Configurations
             builder.Property(c => c.Email).IsRequired().HasMaxLength(255);
             builder.Property(c => c.PhoneNumber).HasMaxLength(20);
             builder.Property(c => c.Address).HasMaxLength(255);
-            builder.Property(c => c.PhotoBase64).HasMaxLength(1000);
+            // Base64 image data: a 1000 char cap held roughly 750 bytes, too small for a
+            // real photo, so this is nvarchar(max).
+            builder.Property(c => c.PhotoBase64);
             builder.HasOne(c => c.JobTitle)
                    .WithMany()
                    .HasForeignKey(c => c.JobTitleId)
