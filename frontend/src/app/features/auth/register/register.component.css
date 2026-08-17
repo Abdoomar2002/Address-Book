@@ -1,0 +1,29 @@
+.register__title {
+  margin: 0 0 4px;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.register__subtitle {
+  margin: 0 0 24px;
+  opacity: 0.7;
+}
+
+.register__form {
+  display: flex;
+  flex-direction: column;
+}
+
+.register__submit {
+  height: 44px;
+}
+
+.register__submit ::ng-deep .mat-mdc-progress-spinner {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.register__footer {
+  margin: 24px 0 0;
+  text-align: center;
+}

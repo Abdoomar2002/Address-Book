@@ -21,10 +21,13 @@ export class AuthService {
       .pipe(tap(response => this.storeSession(response)));
   }
 
+  /**
+   * Creates the account but deliberately does NOT start a session: the flow sends the
+   * user to the login page to sign in themselves. The API returns a token here, and
+   * storing it would leave them logged in while sitting on /login.
+   */
   register(request: RegisterRequest): Observable<AuthResponse> {
-    return this.http
-      .post<AuthResponse>(`${this.baseUrl}/register`, request)
-      .pipe(tap(response => this.storeSession(response)));
+    return this.http.post<AuthResponse>(`${this.baseUrl}/register`, request);
   }
 
   logout(): void {

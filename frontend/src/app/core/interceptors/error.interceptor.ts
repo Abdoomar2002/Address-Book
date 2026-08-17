@@ -20,7 +20,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 401) {
+      // Login and register answer bad credentials with 401 too. Treating those as an
+      // expired session would bounce the user back to the login page with no message.
+      if (error.status === 401 && !isCredentialRequest(req.url)) {
         authService.logout();
         router.navigate(['/login'], { queryParams: { returnUrl: router.url } });
       } else {
@@ -35,6 +37,11 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     })
   );
 };
+
+/** True for the endpoints where a 401 means "wrong credentials", not "session over". */
+function isCredentialRequest(url: string): boolean {
+  return url.includes('/auth/login') || url.includes('/auth/register');
+}
 
 /**
  * The API speaks two error shapes: `{ message }` from the exception middleware and
